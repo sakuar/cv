@@ -141,9 +141,10 @@ button { font-family: inherit; cursor: pointer; color: inherit; }
 }
 
 .auth-form { display: flex; flex-direction: column; gap: 15px; }
-.field { display: flex; flex-direction: column; gap: 7px; }
+.field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
 .field > span { font-size: 12px; font-weight: 600; color: var(--text-3); letter-spacing: .02em; }
 .field input, .field textarea, .field select {
+  width: 100%; min-width: 0; max-width: 100%;
   background: var(--bg-2);
   border: 1px solid var(--line);
   border-radius: var(--r-sm);
