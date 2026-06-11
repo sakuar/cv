@@ -9,7 +9,10 @@
 
   function defaultData() {
     return {
-      settings: { template: 'minimal', skin: 'indigo', fontScale: 1 },
+      settings: {
+        template: 'minimal', skin: 'indigo', fontScale: 1,
+        order: ['experience', 'projects', 'education', 'skills', 'languages', 'awards']
+      },
       basics: {
         name: '你的名字',
         headline: '高级前端工程师',

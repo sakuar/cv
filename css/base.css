@@ -309,6 +309,14 @@ button { font-family: inherit; cursor: pointer; color: inherit; }
   background: linear-gradient(var(--accent-2), var(--accent));
 }
 .ed-head .chevron { transition: transform .22s var(--ease); color: var(--text-3); font-size: 12px; }
+.drag-handle {
+  cursor: grab; color: var(--text-3); margin-right: 4px; font-size: 13px;
+  letter-spacing: -2px; user-select: none;
+}
+.drag-handle:hover { color: var(--accent-2); }
+.drag-handle:active { cursor: grabbing; }
+.ed-section.dragging { opacity: .55; border-color: var(--accent); box-shadow: 0 8px 24px -8px var(--accent-glow); }
+#ed-sortable { display: flex; flex-direction: column; }
 .ed-section.collapsed .ed-body { display: none; }
 .ed-section.collapsed .chevron { transform: rotate(-90deg); }
 .ed-body {

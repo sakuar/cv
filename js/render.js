@@ -112,7 +112,30 @@
       </div>`).join('');
   }
 
-  /* ---------- 单列布局：minimal / tech / magazine ---------- */
+  /* ---------- 可排序的正文模块：key -> [标题, 渲染函数] ---------- */
+  const SEC = {
+    experience: ['工作经历', secExperience],
+    projects:   ['项目经历', secProjects],
+    education:  ['教育背景', secEducation],
+    skills:     ['专业技能', secSkills],
+    languages:  ['语言能力', secLanguages],
+    awards:     ['荣誉奖项', secAwards],
+  };
+  // 按 settings.order 排列出 allowed 范围内的模块顺序（缺失的补到末尾）
+  function orderedKeys(d, allowed) {
+    const order = (d.settings && d.settings.order) || [];
+    const seq = order.filter(k => allowed.indexOf(k) !== -1);
+    allowed.forEach(k => { if (seq.indexOf(k) === -1) seq.push(k); });
+    return seq;
+  }
+  function orderedSections(d, allowed) {
+    return orderedKeys(d, allowed).map(k => {
+      const e = SEC[k];
+      return e ? section(e[0], e[1](d)) : '';
+    }).join('');
+  }
+
+  /* ---------- 单列布局：minimal / tech / magazine 等 ---------- */
   function renderSingle(d) {
     const b = d.basics;
     return `
@@ -123,16 +146,11 @@
           ${contactsHtml(b, d.social)}
         </header>
         ${section('个人简介', secSummary(d))}
-        ${section('工作经历', secExperience(d))}
-        ${section('项目经历', secProjects(d))}
-        ${section('教育背景', secEducation(d))}
-        ${section('专业技能', secSkills(d))}
-        ${section('语言能力', secLanguages(d))}
-        ${section('荣誉奖项', secAwards(d))}
+        ${orderedSections(d, ['experience', 'projects', 'education', 'skills', 'languages', 'awards'])}
       </div>`;
   }
 
-  /* ---------- 边栏布局：creative ---------- */
+  /* ---------- 边栏布局：creative / sidebar ---------- */
   function renderSidebar(d) {
     const b = d.basics;
     const avatar = has(b.avatar) ? `<img class="r-avatar" src="${esc(b.avatar)}" alt="头像" />` : '';
@@ -142,15 +160,11 @@
         <h1 class="r-name">${esc(b.name)}</h1>
         <div class="r-headline">${esc(b.headline)}</div>
         ${section('联系方式', contactsHtml(b, d.social))}
-        ${section('专业技能', secSkills(d))}
-        ${section('语言能力', secLanguages(d))}
+        ${orderedSections(d, ['skills', 'languages'])}
       </aside>
       <main class="r-main">
         ${section('个人简介', secSummary(d))}
-        ${section('工作经历', secExperience(d))}
-        ${section('项目经历', secProjects(d))}
-        ${section('教育背景', secEducation(d))}
-        ${section('荣誉奖项', secAwards(d))}
+        ${orderedSections(d, ['experience', 'projects', 'education', 'awards'])}
       </main>`;
   }
 

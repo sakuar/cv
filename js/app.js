@@ -54,6 +54,12 @@
     { id: 'slate', color: '#475569' },
   ];
 
+  // 页头相关模块固定在顶部；其余为可拖动排序的正文模块
+  const PINNED = ['basics', 'social'];
+  const SORTABLE = ['experience', 'projects', 'education', 'skills', 'languages', 'awards'];
+  const schemaByKey = {};
+  SCHEMA.forEach(s => { schemaByKey[s.key] = s; });
+
   // ---------- DOM 引用 ----------
   const $ = (s) => document.querySelector(s);
   const authView = $('#auth-view'), appView = $('#app-view');
@@ -183,16 +189,34 @@
   // ============================================================
   function buildEditor() {
     editorEl.innerHTML = '';
-    SCHEMA.forEach(sec => editorEl.appendChild(buildSection(sec)));
+    // 顶部固定：基本信息 + 社交链接
+    PINNED.forEach(k => editorEl.appendChild(buildSection(schemaByKey[k], false)));
+    // 可排序正文模块（按 settings.order）
+    const sortWrap = document.createElement('div');
+    sortWrap.id = 'ed-sortable';
+    const order = orderForEditor();
+    order.forEach(k => sortWrap.appendChild(buildSection(schemaByKey[k], true)));
+    editorEl.appendChild(sortWrap);
+    setupSortable(sortWrap);
   }
 
-  function buildSection(sec) {
+  // 返回有效的排序数组：过滤非法 key、补齐缺失项
+  function orderForEditor() {
+    let order = (data.settings.order || []).filter(k => SORTABLE.indexOf(k) !== -1);
+    SORTABLE.forEach(k => { if (order.indexOf(k) === -1) order.push(k); });
+    data.settings.order = order;
+    return order;
+  }
+
+  function buildSection(sec, sortable) {
     const box = document.createElement('div');
     box.className = 'ed-section';
+    box.dataset.key = sec.key;
 
     const head = document.createElement('div');
     head.className = 'ed-head';
-    head.innerHTML = `<span>${sec.title}</span><span class="chevron">▾</span>`;
+    const grip = sortable ? '<span class="drag-handle" title="拖动排序">⠿</span>' : '';
+    head.innerHTML = `<span>${grip}${sec.title}</span><span class="chevron">▾</span>`;
     head.addEventListener('click', () => box.classList.toggle('collapsed'));
     box.appendChild(head);
 
@@ -304,6 +328,55 @@
     });
     label.appendChild(input);
     return label;
+  }
+
+  // ============================================================
+  //  拖动排序正文模块
+  // ============================================================
+  function setupSortable(container) {
+    container.querySelectorAll('.ed-section').forEach(section => {
+      const handle = section.querySelector('.drag-handle');
+      if (!handle) return;
+      handle.addEventListener('click', (e) => e.stopPropagation());           // 不触发折叠
+      handle.addEventListener('mousedown', () => { section.draggable = true; });
+      handle.addEventListener('mouseup', () => { section.draggable = false; });
+      section.addEventListener('dragstart', (e) => {
+        section.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', section.dataset.key);
+      });
+      section.addEventListener('dragend', () => {
+        section.classList.remove('dragging');
+        section.draggable = false;
+        commitOrder(container);
+      });
+    });
+    container.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      const dragging = container.querySelector('.ed-section.dragging');
+      if (!dragging) return;
+      const after = dragAfter(container, e.clientY);
+      if (after == null) container.appendChild(dragging);
+      else container.insertBefore(dragging, after);
+    });
+  }
+
+  function dragAfter(container, y) {
+    const els = [].slice.call(container.querySelectorAll('.ed-section:not(.dragging)'));
+    let closest = null, closestOffset = -Infinity;
+    els.forEach(el => {
+      const box = el.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      if (offset < 0 && offset > closestOffset) { closestOffset = offset; closest = el; }
+    });
+    return closest;
+  }
+
+  function commitOrder(container) {
+    const keys = [].slice.call(container.querySelectorAll('.ed-section')).map(s => s.dataset.key);
+    data.settings.order = keys;
+    persist();
+    renderPreview();
   }
 
   // ============================================================
