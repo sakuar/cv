@@ -134,6 +134,7 @@
     const v = data.settings.fontScale || 1;
     resumeRoot.style.setProperty('--rs', v);
     $('#font-val').textContent = Math.round(v * 100) + '%';
+    relayoutZoom();
   }
   $('#font-range').addEventListener('input', (e) => {
     data.settings.fontScale = parseFloat(e.target.value);
@@ -157,7 +158,7 @@
   //  保存 + 预览
   // ============================================================
   function persist() { Store.save(currentUser, data); }
-  function renderPreview() { Render.render(resumeRoot, data); }
+  function renderPreview() { Render.render(resumeRoot, data); relayoutZoom(); }
 
   // ============================================================
   //  模板 / 皮肤选择
@@ -436,11 +437,21 @@
   //  预览缩放（视图放大/缩小，不改内容）
   // ============================================================
   let zoom = 1;
+  // 把简历整体等比缩放，并预留出缩放后的尺寸，使滚动条/居中正确
+  function relayoutZoom() {
+    const sizer = document.getElementById('zoom-sizer');
+    if (!sizer) return;
+    const natW = resumeRoot.offsetWidth || 820;   // 自然宽（不受 transform 影响）
+    const natH = resumeRoot.offsetHeight || 1050;  // 自然高
+    sizer.style.transform = 'scale(' + zoom + ')';
+    sizer.style.width = (natW * zoom) + 'px';
+    sizer.style.height = (natH * zoom) + 'px';
+  }
   function applyZoom(z) {
     zoom = Math.max(0.4, Math.min(2, Math.round(z * 100) / 100));
-    resumeRoot.style.zoom = zoom;
     $('#zoom-val').textContent = Math.round(zoom * 100) + '%';
     localStorage.setItem('rs_zoom', zoom);
+    relayoutZoom();
   }
   $('#zoom-out').addEventListener('click', () => applyZoom(zoom - 0.1));
   $('#zoom-in').addEventListener('click', () => applyZoom(zoom + 0.1));
