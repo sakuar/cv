@@ -420,6 +420,26 @@
   $('#btn-print').addEventListener('click', () => window.print());
 
   // ============================================================
+  //  重置为示例模板内容（保留模板/皮肤/字号）
+  // ============================================================
+  $('#btn-reset').addEventListener('click', () => {
+    if (!confirm('确定重置为示例模板内容吗？\n\n当前所有简历内容会被清空并恢复成示例（被删除的模块也会回来）。\n你选的模板、皮肤、字号会保留。此操作不可撤销。')) return;
+    const keep = {
+      template: data.settings.template,
+      skin: data.settings.skin,
+      fontScale: data.settings.fontScale,
+    };
+    data = Store.defaultData();
+    Object.assign(data.settings, keep);
+    persist();
+    buildSkins();
+    $('#template-select').value = data.settings.template;
+    buildEditor();
+    renderPreview();
+    toast('已重置为示例模板内容 ✓');
+  });
+
+  // ============================================================
   //  主题（日间 / 夜间）
   // ============================================================
   function applyTheme(t) {
