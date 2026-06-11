@@ -605,6 +605,28 @@
     applyZoom(avail / 820);                 // 820 = 简历基准宽度
   });
 
+  // 电脑：Ctrl/⌘ + 滚轮缩放（触控板双指捏合也会带 ctrlKey）
+  const previewWrap = document.querySelector('.preview-wrap');
+  previewWrap.addEventListener('wheel', (e) => {
+    if (!e.ctrlKey && !e.metaKey) return;   // 不按修饰键时正常滚动
+    e.preventDefault();
+    applyZoom(zoom + (e.deltaY < 0 ? 0.06 : -0.06));
+  }, { passive: false });
+
+  // 手机：双指捏合缩放
+  let pinchDist = 0, pinchZoom = 1, pinching = false;
+  const touchDist = (t) => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+  previewWrap.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 2) { pinching = true; pinchDist = touchDist(e.touches); pinchZoom = zoom; }
+  }, { passive: false });
+  previewWrap.addEventListener('touchmove', (e) => {
+    if (pinching && e.touches.length === 2) {
+      e.preventDefault();                    // 阻止整页缩放，只缩简历
+      applyZoom(pinchZoom * (touchDist(e.touches) / pinchDist));
+    }
+  }, { passive: false });
+  previewWrap.addEventListener('touchend', (e) => { if (e.touches.length < 2) pinching = false; });
+
   // ============================================================
   //  预览模式（隐藏编辑表单）
   // ============================================================
