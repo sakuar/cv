@@ -156,11 +156,12 @@
 
   const Render = {
     render(root, data) {
-      root.dataset.template = data.settings.template;
+      const tpl = data.settings.template;
+      root.dataset.template = tpl;
       root.dataset.skin = data.settings.skin;
-      root.innerHTML = (data.settings.template === 'creative')
-        ? renderSidebar(data)
-        : renderSingle(data);
+      // 这些模板使用「左侧边栏」布局，其余用单列布局
+      const SIDEBAR = ['creative', 'sidebar'];
+      root.innerHTML = SIDEBAR.includes(tpl) ? renderSidebar(data) : renderSingle(data);
     }
   };
 

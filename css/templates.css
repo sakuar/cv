@@ -203,3 +203,105 @@
   content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%;
   background: var(--accent); margin-right: 9px; vertical-align: middle;
 }
+
+/* ================================================================
+   模板 5 · 商务精英（executive）
+   大写姓名 · 双线分隔 · 正统商务风
+   ================================================================ */
+.resume[data-template="executive"] {
+  font-family: "Inter", "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+}
+.resume[data-template="executive"] .r-body { padding: 50px 58px; }
+.resume[data-template="executive"] .r-top {
+  border-top: 3px solid var(--accent);
+  border-bottom: 1px solid var(--ink);
+  padding: 22px 0 18px; margin-bottom: 26px;
+}
+.resume[data-template="executive"] .r-name {
+  font-size: calc(31px * var(--rs)); font-weight: 800; margin: 0;
+  text-transform: uppercase; letter-spacing: .03em; line-height: 1.1;
+}
+.resume[data-template="executive"] .r-headline {
+  color: var(--ink-2); font-size: calc(12.5px * var(--rs)); font-weight: 600;
+  text-transform: uppercase; letter-spacing: .18em; margin: 8px 0 14px;
+}
+.resume[data-template="executive"] .r-sec-title {
+  color: var(--ink); border-bottom: 2px solid var(--accent);
+  display: inline-block; padding-bottom: 5px; letter-spacing: .1em;
+}
+.resume[data-template="executive"] .r-avatar { display: none; }
+
+/* ================================================================
+   模板 6 · 时间轴（timeline）
+   经历用竖向时间轴 + 节点圆点
+   ================================================================ */
+.resume[data-template="timeline"] {
+  font-family: "Inter", "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+}
+.resume[data-template="timeline"] .r-body { padding: 50px 56px; }
+.resume[data-template="timeline"] .r-top {
+  padding-bottom: 22px; margin-bottom: 26px; border-bottom: 1px solid var(--line);
+}
+.resume[data-template="timeline"] .r-name { font-size: calc(32px * var(--rs)); font-weight: 800; margin: 0; letter-spacing: -.01em; }
+.resume[data-template="timeline"] .r-headline { color: var(--accent); font-weight: 600; font-size: calc(15px * var(--rs)); margin: 6px 0 14px; }
+.resume[data-template="timeline"] .r-section .r-item {
+  position: relative; margin-bottom: 0; padding: 0 0 18px 22px;
+  border-left: 2px solid var(--line); margin-left: 4px;
+}
+.resume[data-template="timeline"] .r-section .r-item:last-child { padding-bottom: 0; }
+.resume[data-template="timeline"] .r-section .r-item::before {
+  content: ""; position: absolute; left: -7px; top: 4px;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--paper); border: 3px solid var(--accent);
+  box-shadow: 0 0 0 2px var(--paper);
+}
+.resume[data-template="timeline"] .r-avatar { display: none; }
+
+/* ================================================================
+   模板 7 · 顶部色带（banner）
+   整条彩色页头横幅放姓名/职位/联系方式
+   ================================================================ */
+.resume[data-template="banner"] {
+  font-family: "Inter", "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+}
+.resume[data-template="banner"] .r-body { padding: 0 52px 50px; }
+.resume[data-template="banner"] .r-top {
+  margin: 0 -52px 30px; padding: 44px 52px 30px; color: #fff;
+  background:
+    radial-gradient(120% 80% at 100% 0%, rgba(255,255,255,.18), transparent 55%),
+    linear-gradient(120deg, var(--accent), color-mix(in srgb, var(--accent) 58%, #11141d));
+}
+.resume[data-template="banner"] .r-name { font-size: calc(34px * var(--rs)); font-weight: 800; margin: 0; color: #fff; letter-spacing: -.01em; }
+.resume[data-template="banner"] .r-headline { color: rgba(255,255,255,.92); font-weight: 600; font-size: calc(15px * var(--rs)); margin: 7px 0 14px; }
+.resume[data-template="banner"] .r-top .r-contacts { color: rgba(255,255,255,.94); }
+.resume[data-template="banner"] .r-top .r-contacts a { color: #fff; }
+.resume[data-template="banner"] .r-sec-title {
+  display: flex; align-items: center; gap: 10px;
+}
+.resume[data-template="banner"] .r-sec-title::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.resume[data-template="banner"] .r-avatar { display: none; }
+
+/* ================================================================
+   模板 8 · 经典侧栏（sidebar）
+   浅灰左栏 + 头像/联系方式/技能 —— 招聘网站最典型布局
+   ================================================================ */
+.resume[data-template="sidebar"] {
+  font-family: "Inter", "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  display: grid; grid-template-columns: 244px 1fr;
+}
+.resume[data-template="sidebar"] .r-aside {
+  background: #f4f6fa; padding: 38px 24px; border-right: 1px solid var(--line); color: var(--ink);
+}
+.resume[data-template="sidebar"] .r-avatar {
+  display: block; width: 112px; height: 112px; border-radius: 50%; object-fit: cover;
+  margin: 0 auto 18px; border: 3px solid #fff;
+  box-shadow: 0 6px 18px -6px rgba(0,0,0,.25);
+}
+.resume[data-template="sidebar"] .r-aside .r-name { font-size: calc(22px * var(--rs)); font-weight: 700; text-align: center; margin: 0; }
+.resume[data-template="sidebar"] .r-aside .r-headline { text-align: center; color: var(--accent); font-weight: 600; margin: 5px 0 24px; font-size: calc(13.5px * var(--rs)); }
+.resume[data-template="sidebar"] .r-aside .r-sec-title { color: var(--accent); border-bottom: 1px solid var(--line); padding-bottom: 5px; }
+.resume[data-template="sidebar"] .r-aside .r-contacts { flex-direction: column; gap: 8px; color: var(--ink-2); font-size: calc(12.5px * var(--rs)); }
+.resume[data-template="sidebar"] .r-aside .r-tag { background: #fff; border: 1px solid var(--line); color: var(--ink-2); }
+.resume[data-template="sidebar"] .r-main { padding: 38px 32px; }
+.resume[data-template="sidebar"] .r-main .r-sec-title { display: flex; align-items: center; gap: 10px; }
+.resume[data-template="sidebar"] .r-main .r-sec-title::after { content: ""; flex: 1; height: 1px; background: var(--line); }
