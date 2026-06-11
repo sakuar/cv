@@ -222,6 +222,13 @@
   function buildListItem(sec, idx) {
     const wrap = document.createElement('div');
     wrap.className = 'ed-item';
+
+    // 顶部独立操作栏：左侧序号，右侧删除（不再覆盖输入框）
+    const bar = document.createElement('div');
+    bar.className = 'ed-item-bar';
+    const no = document.createElement('span');
+    no.className = 'ed-item-no';
+    no.textContent = '#' + (idx + 1);
     const rm = document.createElement('button');
     rm.className = 'item-remove';
     rm.innerHTML = '✕';
@@ -230,7 +237,9 @@
       data[sec.key].splice(idx, 1);
       persist(); buildEditor(); renderPreview();
     });
-    wrap.appendChild(rm);
+    bar.append(no, rm);
+    wrap.appendChild(bar);
+
     wrap.appendChild(buildFieldGrid(sec, sec.fields, idx));
     return wrap;
   }
