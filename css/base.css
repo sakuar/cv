@@ -334,6 +334,17 @@ button { font-family: inherit; cursor: pointer; color: inherit; }
   border-top: 1px solid var(--line-soft);
 }
 
+/* 卡片内的子块（如基本信息里的社交链接） */
+.ed-subblock {
+  margin-top: 2px; padding-top: 13px; border-top: 1px solid var(--line-soft);
+  display: flex; flex-direction: column; gap: 11px;
+}
+.ed-subtitle {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12.5px; font-weight: 700; color: var(--text-2);
+}
+.ed-subtitle::before { content: ""; width: 4px; height: 13px; border-radius: 3px; background: var(--accent); }
+
 .ed-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .ed-grid .field.full { grid-column: 1 / -1; }
 .field textarea { resize: vertical; min-height: 68px; line-height: 1.6; }

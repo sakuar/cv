@@ -28,8 +28,12 @@
     if (has(b.location)) parts.push(`<span>📍 ${esc(b.location)}</span>`);
     if (has(b.website)) parts.push(`<a href="${esc(b.website)}" target="_blank">🔗 ${esc(b.website)}</a>`);
     (social || []).forEach(s => {
-      if (has(s.url) || has(s.label)) {
-        parts.push(`<a href="${esc(s.url)}" target="_blank">${esc(s.label || s.url)}</a>`);
+      const label = has(s.label) ? esc(s.label) : '';
+      if (has(s.url)) {
+        const disp = esc(String(s.url).replace(/^https?:\/\//, '').replace(/\/+$/, ''));
+        parts.push(`<a href="${esc(s.url)}" target="_blank">${label ? label + '：' : ''}${disp}</a>`);
+      } else if (label) {
+        parts.push(`<span>${label}</span>`);   // 没有链接则只显示名称，不再是空链接
       }
     });
     return parts.length ? `<div class="r-contacts">${parts.join('')}</div>` : '';

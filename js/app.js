@@ -39,7 +39,8 @@
       { name: 'name', label: '语言' }, { name: 'level', label: '水平' },
     ]},
     { key: 'social', title: '社交链接', type: 'list', addLabel: '+ 添加链接', fields: [
-      { name: 'label', label: '名称（如 GitHub）' }, { name: 'url', label: '网址' },
+      { name: 'label', label: '名称（如 GitHub）' },
+      { name: 'url', label: '链接（如 github.com/you）' },
     ]},
     { key: 'awards', title: '荣誉奖项', type: 'list', addLabel: '+ 添加奖项', fields: [
       { name: 'role', label: '奖项名称' }, { name: 'date', label: '时间' },
@@ -54,8 +55,8 @@
     { id: 'slate', color: '#475569' },
   ];
 
-  // 页头相关模块固定在顶部；其余为可拖动排序的正文模块
-  const PINNED = ['basics', 'social'];
+  // 页头模块固定在顶部（社交链接并入基本信息卡片内）；其余为可拖动排序的正文模块
+  const PINNED = ['basics'];
   const SORTABLE = ['experience', 'projects', 'education', 'skills', 'languages', 'awards'];
   const schemaByKey = {};
   SCHEMA.forEach(s => { schemaByKey[s.key] = s; });
@@ -277,6 +278,7 @@
 
     if (sec.type === 'object') {
       body.appendChild(buildFieldGrid(sec, sec.fields, null));
+      if (sec.key === 'basics') body.appendChild(buildSocialBlock());  // 社交链接嵌入基本信息
     } else {
       const arr = data[sec.key] || (data[sec.key] = []);
       arr.forEach((item, idx) => body.appendChild(buildListItem(sec, idx)));
@@ -293,6 +295,32 @@
     }
     box.appendChild(body);
     return box;
+  }
+
+  // 社交链接子块（嵌在基本信息卡片内）
+  function buildSocialBlock() {
+    const sec = schemaByKey['social'];
+    const block = document.createElement('div');
+    block.className = 'ed-subblock';
+    const title = document.createElement('div');
+    title.className = 'ed-subtitle';
+    title.textContent = '社交链接';
+    block.appendChild(title);
+
+    const arr = data.social || (data.social = []);
+    arr.forEach((item, idx) => block.appendChild(buildListItem(sec, idx)));
+
+    const addBtn = document.createElement('button');
+    addBtn.className = 'btn-add';
+    addBtn.textContent = sec.addLabel || '+ 添加链接';
+    addBtn.addEventListener('click', () => {
+      const blank = {};
+      sec.fields.forEach(f => blank[f.name] = '');
+      data.social.push(blank);
+      persist(); buildEditor(); renderPreview();
+    });
+    block.appendChild(addBtn);
+    return block;
   }
 
   function buildListItem(sec, idx) {
