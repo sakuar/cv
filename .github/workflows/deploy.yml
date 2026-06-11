@@ -29,8 +29,6 @@ jobs:
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true        # 首次运行尝试自动开启 Pages
 
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
