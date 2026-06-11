@@ -613,6 +613,13 @@
     $('#btn-focus').textContent = on ? '退出预览' : '预览模式';
   });
 
+  // 移动端：编辑 / 预览 单视图切换
+  $('#mobile-toggle').addEventListener('click', () => {
+    const on = appView.classList.toggle('mobile-preview');
+    $('#mobile-toggle').textContent = on ? '← 返回编辑' : '预览简历 →';
+    if (on) relayoutZoom();   // 预览刚显示，重算缩放布局
+  });
+
   // ============================================================
   //  Toast 轻提示
   // ============================================================
