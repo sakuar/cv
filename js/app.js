@@ -19,7 +19,7 @@
     { key: 'experience', title: '工作经历', type: 'list', addLabel: '+ 添加工作经历', fields: [
       { name: 'role', label: '职位' }, { name: 'org', label: '公司' },
       { name: 'date', label: '时间（如 2022 — 至今）' }, { name: 'location', label: '地点' },
-      { name: 'bullets', label: '工作内容（每行一条）', type: 'textarea', full: true },
+      { name: 'bullets', label: '工作内容（可逐条增减）', type: 'bullets', full: true },
     ]},
     { key: 'projects', title: '项目经历', type: 'list', addLabel: '+ 添加项目', fields: [
       { name: 'name', label: '项目名称' }, { name: 'url', label: '链接' },
@@ -363,6 +363,12 @@
     else data[sec.key][idx][field] = val;
   }
 
+  // 文本域随内容自适应高度
+  function autoGrow(ta) {
+    ta.style.height = 'auto';
+    ta.style.height = (ta.scrollHeight + 2) + 'px';
+  }
+
   function buildField(sec, f, idx) {
     const label = document.createElement('label');
     label.className = 'field' + (f.full || f.type === 'textarea' || f.type === 'avatar' ? ' full' : '');
@@ -396,6 +402,45 @@
       });
       row.append(img, file, clear);
       label.appendChild(row);
+      return label;
+    }
+
+    // 可逐条增减的条目列表（工作内容）
+    if (f.type === 'bullets') {
+      let arr = getVal(sec, f.name, idx);
+      if (!Array.isArray(arr)) {                       // 兼容旧的换行字符串
+        arr = arr ? String(arr).split('\n').map(s => s.trim()).filter(Boolean) : [];
+        setVal(sec, f.name, idx, arr);
+      }
+      const list = document.createElement('div');
+      list.className = 'bullets-list';
+
+      const renderRows = () => {
+        list.innerHTML = '';
+        arr.forEach((text, i) => {
+          const rowEl = document.createElement('div');
+          rowEl.className = 'bullet-row';
+          const ta = document.createElement('textarea');
+          ta.rows = 1; ta.value = text; ta.placeholder = '一条工作内容 / 成果';
+          ta.addEventListener('input', () => { arr[i] = ta.value; autoGrow(ta); persist(); renderPreview(); });
+          const del = document.createElement('button');
+          del.type = 'button'; del.className = 'bullet-rm'; del.innerHTML = '✕'; del.title = '删除此条';
+          del.addEventListener('click', () => { arr.splice(i, 1); persist(); renderRows(); renderPreview(); });
+          rowEl.append(ta, del);
+          list.appendChild(rowEl);
+        });
+        const add = document.createElement('button');
+        add.type = 'button'; add.className = 'btn-add'; add.textContent = '+ 添加一条';
+        add.addEventListener('click', () => {
+          arr.push(''); persist(); renderRows(); renderPreview();
+          const last = list.querySelector('.bullet-row:last-of-type textarea');
+          if (last) last.focus();
+        });
+        list.appendChild(add);
+        requestAnimationFrame(() => list.querySelectorAll('textarea').forEach(autoGrow));
+      };
+      renderRows();
+      label.appendChild(list);
       return label;
     }
 

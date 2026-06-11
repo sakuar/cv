@@ -31,6 +31,7 @@
   overflow: hidden;
   font-size: calc(14px * var(--rs)); line-height: 1.62;
   letter-spacing: .005em;
+  overflow-wrap: break-word; word-break: break-word;
 }
 .resume a { color: var(--accent); text-decoration: none; transition: opacity .15s; }
 .resume a:hover { opacity: .75; }

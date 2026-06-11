@@ -19,8 +19,9 @@
     if (/^[a-z][a-z0-9+.\-]*:/i.test(u)) return u;   // 已带 http:// mailto: tel: 等
     return 'https://' + u;
   };
-  const linesToList = (text) => {
-    const items = String(text || '').split('\n').map(l => l.trim()).filter(Boolean);
+  const linesToList = (val) => {
+    const items = (Array.isArray(val) ? val : String(val || '').split('\n'))
+      .map(l => String(l).trim()).filter(Boolean);
     if (!items.length) return '';
     return '<ul class="r-bullets">' + items.map(l => `<li>${esc(l)}</li>`).join('') + '</ul>';
   };
