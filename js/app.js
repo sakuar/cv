@@ -158,7 +158,40 @@
   //  保存 + 预览
   // ============================================================
   function persist() { Store.save(currentUser, data); }
-  function renderPreview() { Render.render(resumeRoot, data); relayoutZoom(); }
+  function renderPreview() {
+    Render.render(resumeRoot, data);
+    applyCustomSkinTo(resumeRoot, data.settings);
+    relayoutZoom();
+  }
+
+  // ---------- 自定义皮肤颜色 ----------
+  function hexToRgb(h) {
+    h = String(h || '').replace('#', '');
+    if (h.length === 3) h = h.split('').map(c => c + c).join('');
+    const n = parseInt(h, 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+  function rgbToHex(r, g, b) {
+    return '#' + [r, g, b].map(x => Math.round(x).toString(16).padStart(2, '0')).join('');
+  }
+  function mixWhite(hex, t) {           // 与白色混合，t 越大越浅
+    const a = hexToRgb(hex);
+    return rgbToHex(a[0] + (255 - a[0]) * t, a[1] + (255 - a[1]) * t, a[2] + (255 - a[2]) * t);
+  }
+  function customVars(settings) {       // 返回自定义皮肤的 CSS 变量；非自定义返回 null
+    if (settings.skin === 'custom' && settings.customColor) {
+      const c = settings.customColor;
+      return { '--accent': c, '--accent-2': mixWhite(c, 0.45), '--accent-wash': mixWhite(c, 0.88) };
+    }
+    return null;
+  }
+  function applyCustomSkinTo(el, settings) {
+    const v = customVars(settings);
+    ['--accent', '--accent-2', '--accent-wash'].forEach(k => {
+      if (v) el.style.setProperty(k, v[k]);
+      else el.style.removeProperty(k);   // 预设皮肤时清除内联，交回 CSS 控制
+    });
+  }
 
   // ============================================================
   //  模板 / 皮肤选择
@@ -184,6 +217,23 @@
       });
       wrap.appendChild(dot);
     });
+
+    // 自定义取色板（任意颜色）
+    const custom = document.createElement('label');
+    custom.className = 'swatch swatch-custom' + (data.settings.skin === 'custom' ? ' active' : '');
+    custom.title = '自定义颜色';
+    const picker = document.createElement('input');
+    picker.type = 'color';
+    picker.value = data.settings.customColor || '#6d7cff';
+    picker.addEventListener('input', () => {
+      data.settings.skin = 'custom';
+      data.settings.customColor = picker.value;
+      persist(); renderPreview();
+      wrap.querySelectorAll('.swatch').forEach(x => x.classList.remove('active'));
+      custom.classList.add('active');
+    });
+    custom.appendChild(picker);
+    wrap.appendChild(custom);
   }
 
   // ============================================================
@@ -581,6 +631,9 @@
     const name = (data.basics.name || '简历').trim();
     const tpl = resumeRoot.dataset.template, skin = resumeRoot.dataset.skin;
     const rs = resumeRoot.style.getPropertyValue('--rs') || 1;
+    let styleStr = '--rs:' + rs + ';';
+    const cv = customVars(data.settings);
+    if (cv) Object.keys(cv).forEach(k => { styleStr += k + ':' + cv[k] + ';'; });
     const html =
       '<!DOCTYPE html>\n<html lang="zh-CN"><head><meta charset="UTF-8">' +
       '<meta name="viewport" content="width=device-width, initial-scale=1">' +
@@ -591,7 +644,7 @@
       '.resume{width:100%;max-width:820px;}\n' +
       '@media print{body{background:#fff;padding:0;}.resume{box-shadow:none!important;border-radius:0!important;}@page{margin:12mm;}}\n' +
       css + '\n</style></head><body>' +
-      '<div class="resume" data-template="' + tpl + '" data-skin="' + skin + '" style="--rs:' + rs + '">' +
+      '<div class="resume" data-template="' + tpl + '" data-skin="' + skin + '" style="' + styleStr + '">' +
       resumeRoot.innerHTML + '</div></body></html>';
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
@@ -609,6 +662,7 @@
     $('#viewer-view').hidden = false;
     const vr = $('#viewer-resume');
     Render.render(vr, d);
+    applyCustomSkinTo(vr, d.settings || {});
     vr.style.setProperty('--rs', (d.settings && d.settings.fontScale) || 1);
     $('#viewer-make').href = location.pathname;
     if (d.basics && d.basics.name) document.title = d.basics.name + ' · 简历';

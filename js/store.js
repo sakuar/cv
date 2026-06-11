@@ -10,7 +10,7 @@
   function defaultData() {
     return {
       settings: {
-        template: 'minimal', skin: 'indigo', fontScale: 1,
+        template: 'minimal', skin: 'indigo', customColor: '#6d7cff', fontScale: 1,
         order: ['experience', 'projects', 'education', 'skills', 'languages', 'awards']
       },
       basics: {
