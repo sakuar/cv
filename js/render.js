@@ -10,6 +10,15 @@
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
   const has = (s) => s && String(s).trim().length > 0;
+  // 链接去掉协议头用于显示
+  const stripProto = (u) => String(u || '').trim().replace(/^https?:\/\//i, '').replace(/\/+$/, '');
+  // 补全协议：没有 scheme 的链接自动加 https://，保证可点击
+  const fullUrl = (u) => {
+    u = String(u || '').trim();
+    if (!u) return '';
+    if (/^[a-z][a-z0-9+.\-]*:/i.test(u)) return u;   // 已带 http:// mailto: tel: 等
+    return 'https://' + u;
+  };
   const linesToList = (text) => {
     const items = String(text || '').split('\n').map(l => l.trim()).filter(Boolean);
     if (!items.length) return '';
@@ -26,12 +35,11 @@
     if (has(b.email)) parts.push(`<a href="mailto:${esc(b.email)}">✉ ${esc(b.email)}</a>`);
     if (has(b.phone)) parts.push(`<span>📞 ${esc(b.phone)}</span>`);
     if (has(b.location)) parts.push(`<span>📍 ${esc(b.location)}</span>`);
-    if (has(b.website)) parts.push(`<a href="${esc(b.website)}" target="_blank">🔗 ${esc(b.website)}</a>`);
+    if (has(b.website)) parts.push(`<a href="${esc(fullUrl(b.website))}" target="_blank">🔗 ${esc(stripProto(b.website))}</a>`);
     (social || []).forEach(s => {
       const label = has(s.label) ? esc(s.label) : '';
       if (has(s.url)) {
-        const disp = esc(String(s.url).replace(/^https?:\/\//, '').replace(/\/+$/, ''));
-        parts.push(`<a href="${esc(s.url)}" target="_blank">${label ? label + '：' : ''}${disp}</a>`);
+        parts.push(`<a href="${esc(fullUrl(s.url))}" target="_blank">${label ? label + '：' : ''}${esc(stripProto(s.url))}</a>`);
       } else if (label) {
         parts.push(`<span>${label}</span>`);   // 没有链接则只显示名称，不再是空链接
       }
@@ -80,7 +88,7 @@
     return arr.map(p => `
       <div class="r-item">
         <div class="r-item-head">
-          <span class="r-role">${has(p.url) ? `<a href="${esc(p.url)}" target="_blank">${esc(p.name)}</a>` : esc(p.name)}</span>
+          <span class="r-role">${has(p.url) ? `<a href="${esc(fullUrl(p.url))}" target="_blank">${esc(p.name)}</a>` : esc(p.name)}</span>
         </div>
         ${has(p.desc) ? `<p class="r-desc">${esc(p.desc)}</p>` : ''}
         ${tagsHtml(p.tags)}
