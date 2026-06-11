@@ -1,0 +1,156 @@
+/* ============================================================
+   templates.css — 4 套简历模板 + 多套皮肤
+   模板由 .resume[data-template] 决定布局/字体
+   皮肤由 .resume[data-skin] 决定主色，二者正交可自由组合
+   ============================================================ */
+
+/* ---------------- 皮肤（主色）---------------- */
+.resume[data-skin="indigo"]  { --accent:#6366f1; --accent-2:#a5b4fc; }
+.resume[data-skin="emerald"] { --accent:#10b981; --accent-2:#6ee7b7; }
+.resume[data-skin="rose"]    { --accent:#f43f5e; --accent-2:#fda4af; }
+.resume[data-skin="amber"]   { --accent:#f59e0b; --accent-2:#fcd34d; }
+.resume[data-skin="violet"]  { --accent:#8b5cf6; --accent-2:#c4b5fd; }
+.resume[data-skin="slate"]   { --accent:#475569; --accent-2:#94a3b8; }
+.resume[data-skin="cyan"]    { --accent:#06b6d4; --accent-2:#67e8f9; }
+
+/* ---------------- 纸张基底（所有模板共享） ---------------- */
+.resume {
+  --paper: #ffffff;
+  --ink: #1f2430;
+  --ink-dim: #5b6373;
+  --line: #e6e8ee;
+  background: var(--paper);
+  color: var(--ink);
+  width: 100%;
+  min-height: 1000px;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0,0,0,.3);
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.resume a { color: var(--accent); text-decoration: none; }
+.resume ul { margin: 6px 0 0; padding-left: 18px; }
+.resume li { margin: 3px 0; }
+.r-empty { color: #b9bfcb; font-style: italic; }
+
+/* 通用块元素 */
+.r-section { margin-bottom: 18px; }
+.r-sec-title {
+  font-size: 13px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--accent);
+  margin: 0 0 10px;
+}
+.r-item { margin-bottom: 12px; }
+.r-item-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.r-role { font-weight: 700; font-size: 15px; }
+.r-org { color: var(--ink-dim); font-size: 13.5px; }
+.r-date { color: var(--ink-dim); font-size: 12.5px; white-space: nowrap; }
+.r-desc { margin: 4px 0 0; color: var(--ink-dim); }
+.r-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.r-tag {
+  font-size: 11.5px; padding: 2px 9px; border-radius: 20px;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent); font-weight: 600;
+}
+.r-skill-group { margin-bottom: 8px; }
+.r-skill-group .label { font-weight: 600; margin-right: 8px; }
+.r-lang { display: flex; justify-content: space-between; padding: 2px 0; }
+.r-contacts { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ink-dim); }
+.r-contacts a, .r-contacts span { display: inline-flex; align-items: center; gap: 5px; }
+
+/* ================================================================
+   模板 1：简约专业（minimal）——单列、克制、求职安全牌
+   ================================================================ */
+.resume[data-template="minimal"] {
+  font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+}
+.resume[data-template="minimal"] .r-body { padding: 44px 50px; }
+.resume[data-template="minimal"] .r-top {
+  border-bottom: 2px solid var(--ink); padding-bottom: 18px; margin-bottom: 22px;
+}
+.resume[data-template="minimal"] .r-name { font-size: 30px; font-weight: 800; margin: 0; letter-spacing: -.01em; }
+.resume[data-template="minimal"] .r-headline { color: var(--accent); font-size: 15px; font-weight: 600; margin: 4px 0 12px; }
+.resume[data-template="minimal"] .r-avatar { display: none; }
+
+/* ================================================================
+   模板 2：技术极客（tech）——深色、等宽、终端感
+   ================================================================ */
+.resume[data-template="tech"] {
+  --paper: #0d1117; --ink: #e6edf3; --ink-dim: #8b949e; --line: #21262d;
+  font-family: "JetBrains Mono", "Cascadia Code", "Consolas", ui-monospace, monospace;
+}
+.resume[data-template="tech"] .r-body { padding: 40px 46px; }
+.resume[data-template="tech"] .r-top {
+  border: 1px solid var(--line); border-radius: 10px; padding: 20px 22px; margin-bottom: 22px;
+  background: #161b22;
+}
+.resume[data-template="tech"] .r-name { font-size: 27px; margin: 0; }
+.resume[data-template="tech"] .r-name::before { content: "> "; color: var(--accent); }
+.resume[data-template="tech"] .r-headline { color: var(--accent-2); margin: 4px 0 12px; font-size: 14px; }
+.resume[data-template="tech"] .r-sec-title { color: var(--accent-2); }
+.resume[data-template="tech"] .r-sec-title::before { content: "// "; opacity: .6; }
+.resume[data-template="tech"] .r-tag {
+  background: transparent; border: 1px solid var(--accent); border-radius: 4px;
+}
+.resume[data-template="tech"] .r-avatar { display: none; }
+
+/* ================================================================
+   模板 3：杂志摆齐（magazine）——衬线大标题、优雅留白
+   ================================================================ */
+.resume[data-template="magazine"] {
+  font-family: Georgia, "Songti SC", "STSong", "Times New Roman", serif;
+}
+.resume[data-template="magazine"] .r-body { padding: 50px 56px; }
+.resume[data-template="magazine"] .r-top { text-align: center; margin-bottom: 30px; }
+.resume[data-template="magazine"] .r-name {
+  font-size: 42px; font-weight: 400; margin: 0; letter-spacing: .02em;
+}
+.resume[data-template="magazine"] .r-headline {
+  font-style: italic; color: var(--ink-dim); font-size: 17px; margin: 8px 0 14px;
+}
+.resume[data-template="magazine"] .r-contacts { justify-content: center; }
+.resume[data-template="magazine"] .r-sec-title {
+  text-align: center; letter-spacing: .2em; color: var(--ink);
+  position: relative; padding-bottom: 8px;
+}
+.resume[data-template="magazine"] .r-sec-title::after {
+  content: ""; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 40px; height: 2px; background: var(--accent);
+}
+.resume[data-template="magazine"] .r-item-head { justify-content: center; text-align: center; }
+.resume[data-template="magazine"] .r-item { text-align: center; }
+.resume[data-template="magazine"] .r-bullets { text-align: left; display: inline-block; }
+.resume[data-template="magazine"] .r-avatar { display: none; }
+
+/* ================================================================
+   模板 4：创意色彩（creative）——左侧彩色边栏 + 头像
+   ================================================================ */
+.resume[data-template="creative"] {
+  font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  display: grid; grid-template-columns: 250px 1fr;
+}
+.resume[data-template="creative"] .r-aside {
+  background: linear-gradient(160deg, var(--accent), color-mix(in srgb, var(--accent) 60%, #000));
+  color: #fff; padding: 34px 24px;
+}
+.resume[data-template="creative"] .r-aside .r-sec-title { color: rgba(255,255,255,.85); }
+.resume[data-template="creative"] .r-aside .r-contacts { flex-direction: column; gap: 8px; color: rgba(255,255,255,.92); }
+.resume[data-template="creative"] .r-aside .r-contacts a { color: #fff; }
+.resume[data-template="creative"] .r-aside a { color: #fff; }
+.resume[data-template="creative"] .r-aside .r-lang { color: rgba(255,255,255,.92); }
+.resume[data-template="creative"] .r-aside .r-tag { background: rgba(255,255,255,.18); color: #fff; }
+.resume[data-template="creative"] .r-avatar {
+  display: block; width: 110px; height: 110px; border-radius: 50%;
+  object-fit: cover; margin: 0 auto 16px; border: 4px solid rgba(255,255,255,.35);
+}
+.resume[data-template="creative"] .r-aside .r-name { font-size: 23px; text-align: center; margin: 0; }
+.resume[data-template="creative"] .r-aside .r-headline { text-align: center; opacity: .9; margin: 4px 0 22px; }
+.resume[data-template="creative"] .r-main { padding: 34px 30px; }
+.resume[data-template="creative"] .r-main .r-sec-title { border-bottom: 2px solid var(--line); padding-bottom: 6px; }
+
+/* 创意模板边栏里技能用进度条 */
+.r-skillbar { margin-bottom: 10px; }
+.r-skillbar .label { display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 4px; }
+.r-skillbar .track { height: 6px; background: rgba(255,255,255,.25); border-radius: 4px; overflow: hidden; }
+.r-skillbar .fill { height: 100%; background: #fff; border-radius: 4px; }

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- 不希望被搜索引擎收录，作为“防止别人搜索”的第一道措施 -->
+  <meta name="robots" content="noindex, nofollow" />
+  <title>简历工坊 · Resume Studio</title>
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/templates.css" />
+</head>
+<body>
+
+  <!-- ============ 登录 / 注册门 ============ -->
+  <section id="auth-view" class="auth-view">
+    <div class="auth-card">
+      <div class="auth-brand">
+        <div class="auth-logo">✦</div>
+        <h1>简历工坊</h1>
+        <p class="auth-sub">登录后管理你的专属简历</p>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-mode="login">登录</button>
+        <button class="auth-tab" data-mode="register">注册</button>
+      </div>
+
+      <form id="auth-form" class="auth-form" autocomplete="off">
+        <label class="field">
+          <span>用户名</span>
+          <input type="text" id="auth-username" placeholder="请输入用户名" required />
+        </label>
+        <label class="field">
+          <span>密码</span>
+          <input type="password" id="auth-password" placeholder="请输入密码" required />
+        </label>
+        <label class="field" id="auth-confirm-field" hidden>
+          <span>确认密码</span>
+          <input type="password" id="auth-confirm" placeholder="请再次输入密码" />
+        </label>
+
+        <p id="auth-msg" class="auth-msg" hidden></p>
+
+        <button type="submit" class="btn btn-primary btn-block" id="auth-submit">登 录</button>
+      </form>
+
+      <p class="auth-hint">
+        🔒 数据仅保存在你当前浏览器本地，不会上传任何服务器。
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ 主应用（登录后显示） ============ -->
+  <section id="app-view" class="app-view" hidden>
+    <!-- 顶栏 -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="topbar-logo">✦ 简历工坊</span>
+      </div>
+      <div class="topbar-center">
+        <div class="picker">
+          <label>模板</label>
+          <select id="template-select">
+            <option value="minimal">简约专业</option>
+            <option value="creative">创意色彩</option>
+            <option value="tech">技术极客</option>
+            <option value="magazine">杂志摆齐</option>
+          </select>
+        </div>
+        <div class="picker">
+          <label>皮肤</label>
+          <div id="skin-swatches" class="swatches"></div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-ghost" id="btn-import">导入</button>
+        <button class="btn btn-ghost" id="btn-export">备份</button>
+        <button class="btn btn-primary" id="btn-print">导出 PDF</button>
+        <span class="user-chip" id="user-chip"></span>
+        <button class="btn btn-ghost" id="btn-logout">退出</button>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <!-- 左侧：编辑器 -->
+      <aside class="editor" id="editor"></aside>
+
+      <!-- 右侧：实时预览 -->
+      <main class="preview-wrap">
+        <div class="preview-scroll">
+          <div id="resume-root" class="resume" data-template="minimal" data-skin="indigo"></div>
+        </div>
+      </main>
+    </div>
+
+    <input type="file" id="import-file" accept="application/json" hidden />
+  </section>
+
+  <script src="js/auth.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
