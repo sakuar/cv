@@ -489,6 +489,7 @@
     $('#viewer-make').href = location.pathname;
     if (d.basics && d.basics.name) document.title = d.basics.name + ' · 简历';
   }
+  $('#viewer-print').addEventListener('click', () => window.print());
   function tryViewer() {
     const h = location.hash || '';
     if (h.indexOf('#cv=') !== 0) return false;

@@ -116,7 +116,10 @@
   <section id="viewer-view" class="viewer-view" hidden>
     <div class="viewer-bar">
       <span class="viewer-tip">📄 这是分享的简历（只读）</span>
-      <a class="btn btn-ghost btn-tiny" id="viewer-make" href="./">制作我的简历 →</a>
+      <div class="viewer-actions">
+        <button class="btn btn-primary btn-tiny" id="viewer-print">下载 PDF</button>
+        <a class="btn btn-ghost btn-tiny" id="viewer-make" href="./">制作我的简历 →</a>
+      </div>
     </div>
     <div class="viewer-scroll">
       <div id="viewer-resume" class="resume"></div>
