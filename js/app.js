@@ -345,6 +345,55 @@
   $('#btn-print').addEventListener('click', () => window.print());
 
   // ============================================================
+  //  可拖动分隔条：调整编辑器 / 预览 宽度
+  // ============================================================
+  (function setupSplitter() {
+    const splitter = $('#splitter');
+    const workspace = document.querySelector('.workspace');
+    const WKEY = 'rs_editor_w';
+    const DEFAULT_W = 468, MIN_W = 300;
+
+    // 恢复上次宽度
+    const saved = parseInt(localStorage.getItem(WKEY), 10);
+    if (saved) editorEl.style.setProperty('--editor-w', saved + 'px');
+
+    let dragging = false;
+    const maxW = () => Math.max(MIN_W, workspace.getBoundingClientRect().width - 380);
+
+    function onMove(e) {
+      if (!dragging) return;
+      const rect = workspace.getBoundingClientRect();
+      let w = Math.round(e.clientX - rect.left);
+      w = Math.max(MIN_W, Math.min(maxW(), w));
+      editorEl.style.setProperty('--editor-w', w + 'px');
+    }
+    function onUp() {
+      if (!dragging) return;
+      dragging = false;
+      splitter.classList.remove('dragging');
+      document.body.style.userSelect = '';
+      document.body.style.cursor = '';
+      const w = parseInt(getComputedStyle(editorEl).width, 10);
+      localStorage.setItem(WKEY, w);
+    }
+    splitter.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      splitter.classList.add('dragging');
+      document.body.style.userSelect = 'none';
+      document.body.style.cursor = 'col-resize';
+      e.preventDefault();
+    });
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+
+    // 双击复位
+    splitter.addEventListener('dblclick', () => {
+      editorEl.style.setProperty('--editor-w', DEFAULT_W + 'px');
+      localStorage.removeItem(WKEY);
+    });
+  })();
+
+  // ============================================================
   //  启动：若已有会话则直接进入
   // ============================================================
   const existing = Auth.currentUser();
