@@ -110,6 +110,15 @@
     </div>
 
     <input type="file" id="import-file" accept="application/json" hidden />
+
+    <!-- 预览缩放条（浮于预览区右下角） -->
+    <div class="zoom-bar" id="zoom-bar">
+      <button class="zoom-btn" id="zoom-out" title="缩小">−</button>
+      <button class="zoom-val" id="zoom-val" title="点击复位 100%">100%</button>
+      <button class="zoom-btn" id="zoom-in" title="放大">+</button>
+      <span class="zoom-sep"></span>
+      <button class="zoom-fit" id="zoom-fit" title="适应预览宽度">适应</button>
+    </div>
   </section>
 
   <!-- ============ 只读查看页（分享链接打开后显示） ============ -->

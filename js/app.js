@@ -124,6 +124,7 @@
     $('#template-select').value = data.settings.template;
     $('#font-range').value = data.settings.fontScale || 1;
     applyFontScale();
+    applyZoom(parseFloat(localStorage.getItem('rs_zoom')) || 1);
     buildEditor();
     renderPreview();
   }
@@ -430,6 +431,25 @@
     applyTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light');
   });
   applyTheme(localStorage.getItem('rs_theme') || 'dark');
+
+  // ============================================================
+  //  预览缩放（视图放大/缩小，不改内容）
+  // ============================================================
+  let zoom = 1;
+  function applyZoom(z) {
+    zoom = Math.max(0.4, Math.min(2, Math.round(z * 100) / 100));
+    resumeRoot.style.zoom = zoom;
+    $('#zoom-val').textContent = Math.round(zoom * 100) + '%';
+    localStorage.setItem('rs_zoom', zoom);
+  }
+  $('#zoom-out').addEventListener('click', () => applyZoom(zoom - 0.1));
+  $('#zoom-in').addEventListener('click', () => applyZoom(zoom + 0.1));
+  $('#zoom-val').addEventListener('click', () => applyZoom(1));
+  $('#zoom-fit').addEventListener('click', () => {
+    const wrap = document.querySelector('.preview-wrap');
+    const avail = wrap.clientWidth - 72;   // 减去左右内边距
+    applyZoom(avail / 820);                 // 820 = 简历基准宽度
+  });
 
   // ============================================================
   //  预览模式（隐藏编辑表单）
