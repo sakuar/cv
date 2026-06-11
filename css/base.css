@@ -349,7 +349,7 @@ button { font-family: inherit; cursor: pointer; color: inherit; }
 .ed-grid .field.full { grid-column: 1 / -1; }
 .field textarea {
   resize: vertical; min-height: 68px; line-height: 1.6;
-  white-space: pre-wrap; overflow-wrap: break-word; word-break: break-word;
+  white-space: pre-wrap; overflow-wrap: break-word;
 }
 
 /* 工作内容：可增减的条目列表 */
