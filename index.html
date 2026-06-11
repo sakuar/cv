@@ -82,6 +82,10 @@
         </div>
       </div>
       <div class="topbar-right">
+        <button class="btn btn-ghost btn-icon" id="btn-theme" title="切换日间 / 夜间">🌙</button>
+        <button class="btn btn-ghost" id="btn-focus">预览模式</button>
+        <button class="btn btn-ghost" id="btn-share">分享链接</button>
+        <button class="btn btn-ghost" id="btn-export-html">导出网页</button>
         <button class="btn btn-ghost" id="btn-import">导入</button>
         <button class="btn btn-ghost" id="btn-export">备份</button>
         <button class="btn btn-primary" id="btn-print">导出 PDF</button>
@@ -107,6 +111,20 @@
 
     <input type="file" id="import-file" accept="application/json" hidden />
   </section>
+
+  <!-- ============ 只读查看页（分享链接打开后显示） ============ -->
+  <section id="viewer-view" class="viewer-view" hidden>
+    <div class="viewer-bar">
+      <span class="viewer-tip">📄 这是分享的简历（只读）</span>
+      <a class="btn btn-ghost btn-tiny" id="viewer-make" href="./">制作我的简历 →</a>
+    </div>
+    <div class="viewer-scroll">
+      <div id="viewer-resume" class="resume"></div>
+    </div>
+  </section>
+
+  <!-- 轻提示 -->
+  <div id="toast" class="toast" hidden></div>
 
   <script src="js/auth.js"></script>
   <script src="js/store.js"></script>

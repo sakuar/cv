@@ -345,6 +345,161 @@
   $('#btn-print').addEventListener('click', () => window.print());
 
   // ============================================================
+  //  主题（日间 / 夜间）
+  // ============================================================
+  function applyTheme(t) {
+    document.documentElement.dataset.theme = t;
+    localStorage.setItem('rs_theme', t);
+    const btn = $('#btn-theme');
+    if (btn) btn.textContent = (t === 'light') ? '☀️' : '🌙';
+  }
+  $('#btn-theme').addEventListener('click', () => {
+    applyTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light');
+  });
+  applyTheme(localStorage.getItem('rs_theme') || 'dark');
+
+  // ============================================================
+  //  预览模式（隐藏编辑表单）
+  // ============================================================
+  $('#btn-focus').addEventListener('click', () => {
+    const on = appView.classList.toggle('focus');
+    $('#btn-focus').textContent = on ? '退出预览' : '预览模式';
+  });
+
+  // ============================================================
+  //  Toast 轻提示
+  // ============================================================
+  let toastTimer = null;
+  function toast(msg) {
+    const el = $('#toast');
+    el.textContent = msg; el.hidden = false;
+    requestAnimationFrame(() => el.classList.add('show'));
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      el.classList.remove('show');
+      setTimeout(() => { el.hidden = true; }, 250);
+    }, 2800);
+  }
+
+  // ============================================================
+  //  分享链接：把数据压缩编码进 URL 的 #cv=...
+  // ============================================================
+  function bytesToB64url(bytes) {
+    let bin = ''; const chunk = 0x8000;
+    for (let i = 0; i < bytes.length; i += chunk) {
+      bin += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+    }
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function b64urlToBytes(s) {
+    s = s.replace(/-/g, '+').replace(/_/g, '/');
+    while (s.length % 4) s += '=';
+    const bin = atob(s); const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+  async function deflate(str) {
+    const cs = new CompressionStream('deflate');
+    const w = cs.writable.getWriter(); w.write(new TextEncoder().encode(str)); w.close();
+    return new Uint8Array(await new Response(cs.readable).arrayBuffer());
+  }
+  async function inflate(bytes) {
+    const ds = new DecompressionStream('deflate');
+    const w = ds.writable.getWriter(); w.write(bytes); w.close();
+    return new TextDecoder().decode(await new Response(ds.readable).arrayBuffer());
+  }
+  async function encodeShare(obj) {
+    const json = JSON.stringify(obj);
+    if (window.CompressionStream) return 'z' + bytesToB64url(await deflate(json));
+    return 'r' + bytesToB64url(new TextEncoder().encode(json));
+  }
+  async function decodeShare(token) {
+    const flag = token[0], bytes = b64urlToBytes(token.slice(1));
+    if (flag === 'z' && window.DecompressionStream) return await inflate(bytes);
+    return new TextDecoder().decode(bytes);
+  }
+  async function buildShareLink() {
+    const base = location.origin + location.pathname;
+    let url = base + '#cv=' + await encodeShare(data);
+    let dropped = false;
+    if (url.length > 12000 && data.basics.avatar) {     // 头像太大 → 省略以保证链接可用
+      const clone = JSON.parse(JSON.stringify(data));
+      clone.basics.avatar = '';
+      url = base + '#cv=' + await encodeShare(clone);
+      dropped = true;
+    }
+    return { url, dropped };
+  }
+  $('#btn-share').addEventListener('click', async () => {
+    try {
+      const { url, dropped } = await buildShareLink();
+      let copied = false;
+      try { await navigator.clipboard.writeText(url); copied = true; } catch (e) {}
+      if (!copied) window.prompt('复制下面的分享链接发给别人：', url);
+      toast(copied
+        ? (dropped ? '链接已复制（头像过大已省略，需含头像请用「导出网页」）' : '分享链接已复制 ✓')
+        : '请手动复制链接');
+    } catch (e) {
+      toast('生成链接失败：' + (e.message || e));
+    }
+  });
+
+  // ============================================================
+  //  导出独立网页（自包含 HTML，含头像，可直接发给别人）
+  // ============================================================
+  function escapeHtml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  $('#btn-export-html').addEventListener('click', async () => {
+    let css = '';
+    try { css = await (await fetch('css/templates.css')).text(); }
+    catch (e) { toast('无法读取模板样式（本地直接打开时请改用部署后的网址）'); return; }
+    const name = (data.basics.name || '简历').trim();
+    const tpl = resumeRoot.dataset.template, skin = resumeRoot.dataset.skin;
+    const rs = resumeRoot.style.getPropertyValue('--rs') || 1;
+    const html =
+      '<!DOCTYPE html>\n<html lang="zh-CN"><head><meta charset="UTF-8">' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1">' +
+      '<title>' + escapeHtml(name) + ' · 简历</title><style>\n' +
+      ':root{--r-sm:8px;--r-md:12px;--r-lg:16px;}\n' +
+      'body{margin:0;background:#d7dbe6;display:flex;justify-content:center;padding:32px;' +
+      'font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;}\n' +
+      '.resume{width:100%;max-width:820px;}\n' +
+      '@media print{body{background:#fff;padding:0;}.resume{box-shadow:none!important;border-radius:0!important;}@page{margin:12mm;}}\n' +
+      css + '\n</style></head><body>' +
+      '<div class="resume" data-template="' + tpl + '" data-skin="' + skin + '" style="--rs:' + rs + '">' +
+      resumeRoot.innerHTML + '</div></body></html>';
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+    a.download = name + '_简历.html';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast('已导出独立网页，可直接发给别人或托管 ✓');
+  });
+
+  // ============================================================
+  //  只读查看页（分享链接打开后）
+  // ============================================================
+  function showViewer(d) {
+    authView.hidden = true; appView.hidden = true;
+    $('#viewer-view').hidden = false;
+    const vr = $('#viewer-resume');
+    Render.render(vr, d);
+    vr.style.setProperty('--rs', (d.settings && d.settings.fontScale) || 1);
+    $('#viewer-make').href = location.pathname;
+    if (d.basics && d.basics.name) document.title = d.basics.name + ' · 简历';
+  }
+  function tryViewer() {
+    const h = location.hash || '';
+    if (h.indexOf('#cv=') !== 0) return false;
+    authView.hidden = true; appView.hidden = true;
+    decodeShare(h.slice(4))
+      .then(json => showViewer(JSON.parse(json)))
+      .catch(() => { authView.hidden = false; });
+    return true;
+  }
+
+  // ============================================================
   //  可拖动分隔条：调整编辑器 / 预览 宽度
   // ============================================================
   (function setupSplitter() {
@@ -394,8 +549,10 @@
   })();
 
   // ============================================================
-  //  启动：若已有会话则直接进入
+  //  启动：分享链接 → 只读查看页；否则若已有会话则直接进入
   // ============================================================
-  const existing = Auth.currentUser();
-  if (existing) enterApp(existing);
+  if (!tryViewer()) {
+    const existing = Auth.currentUser();
+    if (existing) enterApp(existing);
+  }
 })();
