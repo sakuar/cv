@@ -2,6 +2,7 @@
    templates.css — 4 套简历模板 + 多套皮肤
    模板 = .resume[data-template] 决定布局/字体
    皮肤 = .resume[data-skin] 决定主色；二者正交可自由组合
+   字号 = --rs 全局缩放因子（默认 1），所有字号 = calc(基准 * --rs)
    ============================================================ */
 
 /* ---------------- 皮肤（主色 + 浅色衬底） ---------------- */
@@ -15,6 +16,7 @@
 
 /* ---------------- 纸张基底（所有模板共享） ---------------- */
 .resume {
+  --rs: 1;                 /* 字号缩放因子，由顶栏调节器控制 */
   --paper: #ffffff;
   --ink:   #1c2230;
   --ink-2: #4a5266;
@@ -27,7 +29,7 @@
   border-radius: var(--r-md);
   box-shadow: 0 40px 90px -30px rgba(0,0,0,.55), 0 0 0 1px rgba(0,0,0,.04);
   overflow: hidden;
-  font-size: 14px; line-height: 1.62;
+  font-size: calc(14px * var(--rs)); line-height: 1.62;
   letter-spacing: .005em;
 }
 .resume a { color: var(--accent); text-decoration: none; transition: opacity .15s; }
@@ -40,35 +42,34 @@
 /* 通用块 */
 .r-section { margin-bottom: 22px; }
 .r-sec-title {
-  font-size: 12px; font-weight: 700; letter-spacing: .12em;
+  font-size: calc(12px * var(--rs)); font-weight: 700; letter-spacing: .12em;
   text-transform: uppercase; color: var(--accent);
   margin: 0 0 12px;
 }
 .r-item { margin-bottom: 15px; }
 .r-item:last-child { margin-bottom: 0; }
 .r-item-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-.r-role { font-weight: 700; font-size: 15px; color: var(--ink); }
-.r-org { color: var(--ink-2); font-size: 13.5px; font-weight: 500; }
+.r-role { font-weight: 700; font-size: calc(15px * var(--rs)); color: var(--ink); }
+.r-org { color: var(--ink-2); font-size: calc(13.5px * var(--rs)); font-weight: 500; }
 .r-date {
-  color: var(--ink-3); font-size: 12px; font-weight: 600; white-space: nowrap;
+  color: var(--ink-3); font-size: calc(12px * var(--rs)); font-weight: 600; white-space: nowrap;
   letter-spacing: .02em;
 }
 .r-desc { margin: 5px 0 0; color: var(--ink-2); }
 .r-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .r-tag {
-  font-size: 11.5px; padding: 3px 10px; border-radius: 6px; line-height: 1.5;
+  font-size: calc(11.5px * var(--rs)); padding: 3px 10px; border-radius: 6px; line-height: 1.5;
   background: var(--accent-wash); color: var(--accent); font-weight: 600;
 }
 .r-skill-group { margin-bottom: 10px; }
-.r-skill-group .label { display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px; color: var(--ink); }
+.r-skill-group .label { display: block; font-weight: 700; font-size: calc(13px * var(--rs)); margin-bottom: 6px; color: var(--ink); }
 .r-lang { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed var(--line); }
 .r-lang:last-child { border-bottom: none; }
-.r-contacts { display: flex; flex-wrap: wrap; gap: 7px 18px; font-size: 13px; color: var(--ink-2); }
+.r-contacts { display: flex; flex-wrap: wrap; gap: 7px 18px; font-size: calc(13px * var(--rs)); color: var(--ink-2); }
 .r-contacts a, .r-contacts span { display: inline-flex; align-items: center; gap: 6px; }
 
 /* ================================================================
    模板 1 · 简约专业（minimal）
-   留白克制 · 强字号层级 · 一道细accent线
    ================================================================ */
 .resume[data-template="minimal"] {
   font-family: "Inter", "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
@@ -83,30 +84,23 @@
   background: var(--accent); border-radius: 3px;
 }
 .resume[data-template="minimal"] .r-name {
-  font-size: 34px; font-weight: 800; margin: 0; letter-spacing: -.02em; line-height: 1.1;
+  font-size: calc(34px * var(--rs)); font-weight: 800; margin: 0; letter-spacing: -.02em; line-height: 1.1;
 }
 .resume[data-template="minimal"] .r-headline {
-  color: var(--accent); font-size: 15px; font-weight: 600; margin: 6px 0 16px;
+  color: var(--accent); font-size: calc(15px * var(--rs)); font-weight: 600; margin: 6px 0 16px;
   letter-spacing: .01em;
 }
-.resume[data-template="minimal"] .r-sec-title {
-  display: flex; align-items: center; gap: 10px;
-}
-.resume[data-template="minimal"] .r-sec-title::after {
-  content: ""; flex: 1; height: 1px; background: var(--line);
-}
+.resume[data-template="minimal"] .r-sec-title { display: flex; align-items: center; gap: 10px; }
+.resume[data-template="minimal"] .r-sec-title::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 .resume[data-template="minimal"] .r-avatar { display: none; }
 
 /* ================================================================
    模板 2 · 技术极客（tech）
-   深色 GitHub 质感 · 等宽字体 · 窗口卡片头 · // 注释标题
    ================================================================ */
 .resume[data-template="tech"] {
   --paper:#0d1117; --ink:#e6edf3; --ink-2:#9aa4b2; --ink-3:#6e7787; --line:#222936;
   font-family: "JetBrains Mono", "Cascadia Code", "SF Mono", "Consolas", ui-monospace, monospace;
-  background:
-    radial-gradient(60% 40% at 100% 0%, rgba(109,124,255,.10), transparent),
-    #0d1117;
+  background: radial-gradient(60% 40% at 100% 0%, rgba(109,124,255,.10), transparent), #0d1117;
 }
 .resume[data-template="tech"] .r-body { padding: 44px 48px; }
 .resume[data-template="tech"] .r-top {
@@ -114,15 +108,14 @@
   padding: 40px 24px 22px; margin-bottom: 26px; background: #11161f;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
 }
-/* 卡片左上角的“窗口红绿灯” */
 .resume[data-template="tech"] .r-top::before {
   content: ""; position: absolute; top: 16px; left: 22px;
   width: 11px; height: 11px; border-radius: 50%;
   background: #ff5f57; box-shadow: 18px 0 #febc2e, 36px 0 #28c840;
 }
-.resume[data-template="tech"] .r-name { font-size: 26px; font-weight: 700; margin: 0; }
+.resume[data-template="tech"] .r-name { font-size: calc(26px * var(--rs)); font-weight: 700; margin: 0; }
 .resume[data-template="tech"] .r-name::before { content: "~/ "; color: var(--accent); }
-.resume[data-template="tech"] .r-headline { color: var(--accent-2); margin: 6px 0 14px; font-size: 14px; }
+.resume[data-template="tech"] .r-headline { color: var(--accent-2); margin: 6px 0 14px; font-size: calc(14px * var(--rs)); }
 .resume[data-template="tech"] .r-headline::before { content: "// "; opacity: .55; }
 .resume[data-template="tech"] .r-sec-title { color: var(--accent-2); }
 .resume[data-template="tech"] .r-sec-title::before { content: "// "; opacity: .55; }
@@ -136,7 +129,6 @@
 
 /* ================================================================
    模板 3 · 杂志摆齐（magazine）
-   编辑排版 · 衬线大标题 · 居中对称 · 发丝线
    ================================================================ */
 .resume[data-template="magazine"] {
   font-family: Georgia, "Songti SC", "STSong", "Noto Serif SC", "Times New Roman", serif;
@@ -144,21 +136,20 @@
 .resume[data-template="magazine"] .r-body { padding: 58px 64px; }
 .resume[data-template="magazine"] .r-top {
   text-align: center; margin-bottom: 34px; padding-bottom: 26px;
-  border-bottom: 1px solid var(--ink);
-  position: relative;
+  border-bottom: 1px solid var(--ink); position: relative;
 }
 .resume[data-template="magazine"] .r-top::before {
   content: "C U R R I C U L U M   V I T A E";
-  display: block; font-size: 10px; letter-spacing: .42em; color: var(--accent);
+  display: block; font-size: calc(10px * var(--rs)); letter-spacing: .42em; color: var(--accent);
   font-family: "Inter", sans-serif; font-weight: 700; margin-bottom: 14px;
 }
 .resume[data-template="magazine"] .r-name {
-  font-size: 46px; font-weight: 400; margin: 0; letter-spacing: .015em; line-height: 1.05;
+  font-size: calc(46px * var(--rs)); font-weight: 400; margin: 0; letter-spacing: .015em; line-height: 1.05;
 }
 .resume[data-template="magazine"] .r-headline {
-  font-style: italic; color: var(--ink-2); font-size: 18px; margin: 10px 0 16px;
+  font-style: italic; color: var(--ink-2); font-size: calc(18px * var(--rs)); margin: 10px 0 16px;
 }
-.resume[data-template="magazine"] .r-contacts { justify-content: center; font-size: 12.5px; }
+.resume[data-template="magazine"] .r-contacts { justify-content: center; font-size: calc(12.5px * var(--rs)); }
 .resume[data-template="magazine"] .r-sec-title {
   text-align: center; letter-spacing: .26em; color: var(--ink);
   font-family: "Inter", sans-serif; position: relative; padding-bottom: 12px; margin-bottom: 16px;
@@ -178,7 +169,6 @@
 
 /* ================================================================
    模板 4 · 创意色彩（creative）
-   彩色边栏 + 头像环 · 双栏 · 技能胶囊
    ================================================================ */
 .resume[data-template="creative"] {
   font-family: "Inter", "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
@@ -191,11 +181,10 @@
     linear-gradient(165deg, var(--accent), color-mix(in srgb, var(--accent) 55%, #11141d));
 }
 .resume[data-template="creative"] .r-aside::after {
-  content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 1px;
-  background: rgba(255,255,255,.12);
+  content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 1px; background: rgba(255,255,255,.12);
 }
 .resume[data-template="creative"] .r-aside .r-sec-title { color: rgba(255,255,255,.92); letter-spacing: .14em; }
-.resume[data-template="creative"] .r-aside .r-contacts { flex-direction: column; gap: 9px; color: rgba(255,255,255,.94); font-size: 12.5px; }
+.resume[data-template="creative"] .r-aside .r-contacts { flex-direction: column; gap: 9px; color: rgba(255,255,255,.94); font-size: calc(12.5px * var(--rs)); }
 .resume[data-template="creative"] .r-aside .r-contacts a, .resume[data-template="creative"] .r-aside a { color: #fff; }
 .resume[data-template="creative"] .r-aside .r-lang { color: rgba(255,255,255,.94); border-color: rgba(255,255,255,.18); }
 .resume[data-template="creative"] .r-aside .r-skill-group .label { color: #fff; }
@@ -205,15 +194,11 @@
   margin: 0 auto 18px; border: 3px solid rgba(255,255,255,.4);
   box-shadow: 0 12px 30px -8px rgba(0,0,0,.45);
 }
-.resume[data-template="creative"] .r-aside .r-name { font-size: 24px; font-weight: 700; text-align: center; margin: 0; }
-.resume[data-template="creative"] .r-aside .r-headline { text-align: center; opacity: .92; margin: 6px 0 26px; font-size: 13.5px; }
+.resume[data-template="creative"] .r-aside .r-name { font-size: calc(24px * var(--rs)); font-weight: 700; text-align: center; margin: 0; }
+.resume[data-template="creative"] .r-aside .r-headline { text-align: center; opacity: .92; margin: 6px 0 26px; font-size: calc(13.5px * var(--rs)); }
 .resume[data-template="creative"] .r-main { padding: 38px 34px; }
-.resume[data-template="creative"] .r-main .r-sec-title {
-  display: flex; align-items: center; gap: 10px;
-}
-.resume[data-template="creative"] .r-main .r-sec-title::after {
-  content: ""; flex: 1; height: 1px; background: var(--line);
-}
+.resume[data-template="creative"] .r-main .r-sec-title { display: flex; align-items: center; gap: 10px; }
+.resume[data-template="creative"] .r-main .r-sec-title::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 .resume[data-template="creative"] .r-main .r-role::before {
   content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%;
   background: var(--accent); margin-right: 9px; vertical-align: middle;

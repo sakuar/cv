@@ -204,6 +204,30 @@ button { font-family: inherit; cursor: pointer; color: inherit; }
 .swatch:hover { transform: scale(1.18) translateY(-1px); }
 .swatch.active { border-color: #fff; box-shadow: 0 0 0 3px var(--accent-glow); transform: scale(1.1); }
 
+/* 字号调节滑块 */
+.fs-range {
+  -webkit-appearance: none; appearance: none;
+  width: 96px; height: 4px; border-radius: 3px; cursor: pointer;
+  background: var(--panel-3);
+}
+.fs-range::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 15px; height: 15px; border-radius: 50%;
+  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+  border: 2px solid var(--bg); box-shadow: 0 2px 6px -1px var(--accent-glow);
+  transition: transform .12s var(--ease);
+}
+.fs-range::-webkit-slider-thumb:hover { transform: scale(1.2); }
+.fs-range::-moz-range-thumb {
+  width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--bg);
+  background: var(--accent); box-shadow: 0 2px 6px -1px var(--accent-glow);
+}
+.fs-range::-moz-range-track { height: 4px; border-radius: 3px; background: var(--panel-3); }
+.fs-val {
+  font-size: 11px; font-weight: 600; color: var(--text-2);
+  min-width: 34px; text-align: right; font-variant-numeric: tabular-nums;
+}
+
 .user-chip {
   font-size: 12px; font-weight: 600; color: var(--text-2);
   padding: 6px 12px; background: var(--panel-2);

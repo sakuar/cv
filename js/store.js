@@ -9,7 +9,7 @@
 
   function defaultData() {
     return {
-      settings: { template: 'minimal', skin: 'indigo' },
+      settings: { template: 'minimal', skin: 'indigo', fontScale: 1 },
       basics: {
         name: '你的名字',
         headline: '高级前端工程师',

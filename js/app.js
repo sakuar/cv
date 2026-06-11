@@ -116,9 +116,23 @@
     $('#user-chip').textContent = '👤 ' + user;
     buildSkins();
     $('#template-select').value = data.settings.template;
+    $('#font-range').value = data.settings.fontScale || 1;
+    applyFontScale();
     buildEditor();
     renderPreview();
   }
+
+  // 字号调节：通过 --rs 缩放因子作用于整篇简历
+  function applyFontScale() {
+    const v = data.settings.fontScale || 1;
+    resumeRoot.style.setProperty('--rs', v);
+    $('#font-val').textContent = Math.round(v * 100) + '%';
+  }
+  $('#font-range').addEventListener('input', (e) => {
+    data.settings.fontScale = parseFloat(e.target.value);
+    applyFontScale();
+    persist();
+  });
 
   $('#btn-logout').addEventListener('click', () => {
     Auth.logout();
@@ -309,7 +323,8 @@
         });
         persist();
         $('#template-select').value = data.settings.template;
-        buildSkins(); buildEditor(); renderPreview();
+        $('#font-range').value = data.settings.fontScale || 1;
+        buildSkins(); applyFontScale(); buildEditor(); renderPreview();
       } catch {
         alert('导入失败：文件格式不正确');
       }
