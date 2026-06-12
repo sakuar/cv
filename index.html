@@ -11,47 +11,8 @@
 </head>
 <body>
 
-  <!-- ============ 登录 / 注册门 ============ -->
-  <section id="auth-view" class="auth-view">
-    <div class="auth-card">
-      <div class="auth-brand">
-        <div class="auth-logo">✦</div>
-        <h1>简历工坊</h1>
-        <p class="auth-sub">登录后管理你的专属简历</p>
-      </div>
-
-      <div class="auth-tabs">
-        <button class="auth-tab active" data-mode="login">登录</button>
-        <button class="auth-tab" data-mode="register">注册</button>
-      </div>
-
-      <form id="auth-form" class="auth-form" autocomplete="off">
-        <label class="field">
-          <span>用户名</span>
-          <input type="text" id="auth-username" placeholder="请输入用户名" required />
-        </label>
-        <label class="field">
-          <span>密码</span>
-          <input type="password" id="auth-password" placeholder="请输入密码" required />
-        </label>
-        <label class="field" id="auth-confirm-field" hidden>
-          <span>确认密码</span>
-          <input type="password" id="auth-confirm" placeholder="请再次输入密码" />
-        </label>
-
-        <p id="auth-msg" class="auth-msg" hidden></p>
-
-        <button type="submit" class="btn btn-primary btn-block" id="auth-submit">登 录</button>
-      </form>
-
-      <p class="auth-hint">
-        🔒 数据仅保存在你当前浏览器本地，不会上传任何服务器。
-      </p>
-    </div>
-  </section>
-
-  <!-- ============ 主应用（登录后显示） ============ -->
-  <section id="app-view" class="app-view" hidden>
+  <!-- ============ 主应用 ============ -->
+  <section id="app-view" class="app-view">
     <!-- 顶栏 -->
     <header class="topbar">
       <div class="topbar-left">
@@ -90,8 +51,6 @@
         <button class="btn btn-ghost" id="btn-import">导入</button>
         <button class="btn btn-ghost" id="btn-export">备份</button>
         <button class="btn btn-primary" id="btn-print">导出 PDF</button>
-        <span class="user-chip" id="user-chip"></span>
-        <button class="btn btn-ghost" id="btn-logout">退出</button>
       </div>
     </header>
 
@@ -142,7 +101,6 @@
   <!-- 轻提示 -->
   <div id="toast" class="toast" hidden></div>
 
-  <script src="js/auth.js"></script>
   <script src="js/store.js"></script>
   <script src="js/render.js"></script>
   <script src="js/app.js"></script>

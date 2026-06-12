@@ -63,64 +63,31 @@
 
   // ---------- DOM 引用 ----------
   const $ = (s) => document.querySelector(s);
-  const authView = $('#auth-view'), appView = $('#app-view');
-  const authForm = $('#auth-form'), authMsg = $('#auth-msg');
-  const usernameEl = $('#auth-username'), passwordEl = $('#auth-password');
-  const confirmField = $('#auth-confirm-field'), confirmEl = $('#auth-confirm');
-  const authSubmit = $('#auth-submit');
+  const appView = $('#app-view');
   const editorEl = $('#editor'), resumeRoot = $('#resume-root');
 
-  let mode = 'login';
-  let currentUser = null;
+  // 无登录：所有数据存在固定的本地账号下
+  const USER = 'local';
   let data = null;
 
-  // ============================================================
-  //  登录 / 注册
-  // ============================================================
-  document.querySelectorAll('.auth-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      mode = tab.dataset.mode;
-      confirmField.hidden = mode !== 'register';
-      authSubmit.textContent = mode === 'register' ? '注 册' : '登 录';
-      hideMsg();
-    });
-  });
-
-  function showMsg(text, ok) {
-    authMsg.textContent = text;
-    authMsg.classList.toggle('ok', !!ok);
-    authMsg.hidden = false;
-  }
-  function hideMsg() { authMsg.hidden = true; }
-
-  authForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    hideMsg();
-    const u = usernameEl.value, p = passwordEl.value;
-    try {
-      if (mode === 'register') {
-        if (p !== confirmEl.value) throw new Error('两次输入的密码不一致');
-        await Auth.register(u, p);
-      } else {
-        await Auth.login(u, p);
-      }
-      enterApp(Auth.currentUser());
-    } catch (err) {
-      showMsg(err.message || '操作失败');
+  // 从旧的「登录账号」数据迁移：若固定账号还没有数据，沿用最近一个旧账号的简历
+  function migrateLegacyData() {
+    if (localStorage.getItem('rs_data_' + USER)) return;
+    let legacyKey = null;
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.indexOf('rs_data_') === 0 && k !== 'rs_data_' + USER) { legacyKey = k; break; }
     }
-  });
+    if (legacyKey) localStorage.setItem('rs_data_' + USER, localStorage.getItem(legacyKey));
+  }
 
   // ============================================================
-  //  进入 / 退出应用
+  //  进入应用
   // ============================================================
-  function enterApp(user) {
-    currentUser = user;
-    data = Store.load(user);
-    authView.hidden = true;
+  function enterApp() {
+    migrateLegacyData();
+    data = Store.load(USER);
     appView.hidden = false;
-    $('#user-chip').textContent = '👤 ' + user;
     buildSkins();
     $('#template-select').value = data.settings.template;
     $('#font-range').value = data.settings.fontScale || 1;
@@ -143,22 +110,10 @@
     persist();
   });
 
-  $('#btn-logout').addEventListener('click', () => {
-    Auth.logout();
-    currentUser = null; data = null;
-    appView.hidden = true;
-    authView.hidden = false;
-    authForm.reset();
-    confirmField.hidden = true;
-    mode = 'login';
-    document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === 'login'));
-    authSubmit.textContent = '登 录';
-  });
-
   // ============================================================
   //  保存 + 预览
   // ============================================================
-  function persist() { Store.save(currentUser, data); }
+  function persist() { Store.save(USER, data); }
   function renderPreview() {
     Render.render(resumeRoot, data);
     applyCustomSkinTo(resumeRoot, data.settings);
@@ -511,7 +466,7 @@
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `简历_${currentUser}.json`;
+    a.download = `简历_${(data.basics.name || '我').trim()}.json`;
     a.click();
     URL.revokeObjectURL(a.href);
   });
@@ -760,7 +715,7 @@
   //  只读查看页（分享链接打开后）
   // ============================================================
   function showViewer(d) {
-    authView.hidden = true; appView.hidden = true;
+    appView.hidden = true;
     $('#viewer-view').hidden = false;
     const vr = $('#viewer-resume');
     Render.render(vr, d);
@@ -773,10 +728,10 @@
   function tryViewer() {
     const h = location.hash || '';
     if (h.indexOf('#cv=') !== 0) return false;
-    authView.hidden = true; appView.hidden = true;
+    appView.hidden = true;
     decodeShare(h.slice(4))
       .then(json => showViewer(JSON.parse(json)))
-      .catch(() => { authView.hidden = false; });
+      .catch(() => { appView.hidden = false; });
     return true;
   }
 
@@ -830,10 +785,9 @@
   })();
 
   // ============================================================
-  //  启动：分享链接 → 只读查看页；否则若已有会话则直接进入
+  //  启动：分享链接 → 只读查看页；否则直接进入编辑器
   // ============================================================
   if (!tryViewer()) {
-    const existing = Auth.currentUser();
-    if (existing) enterApp(existing);
+    enterApp();
   }
 })();
